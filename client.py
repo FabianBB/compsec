@@ -28,4 +28,10 @@ response = client.recv(2048)
 response = response.decode()
 
 print(response)
-client.close()
+
+#Counter
+response = client.recv(2048)
+count = input(response.decode())
+client.send(str.encode(count))
+
+#client.close()
