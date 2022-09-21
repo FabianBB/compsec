@@ -29,18 +29,18 @@ response = response.decode()
 
 print(response)
 
-#Counter
-response = client.recv(2048)
-count = input(response.decode())
-client.send(str.encode(count))
-
-message = ""
 
 
-while message.lower().strip() != 'exit':
+responseC = ""
+while True:
+    # Counter
+    response = client.recv(2048)
+    count = input(response.decode())
+    client.send(str.encode(count))
+    #Response of counter
+    responseC = client.recv(2048)
+    responseC = responseC.decode()
+    if responseC == "Log Out":
+        break
 
-    message = input(" -> ")  # again take input
-    client.send(message.encode())  # send message
-
-print(response)
 client.close()
