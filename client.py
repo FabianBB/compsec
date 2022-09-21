@@ -1,7 +1,5 @@
 import socket
 
-
-
 # create an ipv4 (AF_INET) socket object using the tcp protocol (SOCK_STREAM)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -27,11 +25,13 @@ client.send(str.encode(password))
 response = client.recv(2048)
 response = response.decode()
 
+message = ""
+
+
+while message.lower().strip() != 'exit':
+
+    message = input(" -> ")  # again take input
+    client.send(message.encode())  # send message
+
 print(response)
-
-#Counter
-response = client.recv(2048)
-count = input(response.decode())
-client.send(str.encode(count))
-
-#client.close()
+client.close()
