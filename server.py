@@ -2,6 +2,7 @@ import socket
 import os
 import threading
 import hashlib
+import logging
 
 # Create Socket (TCP) Connection
 ServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
@@ -18,6 +19,8 @@ ServerSocket.listen(5)
 HashTable = {}
 HashTable_count = {}
 
+# Configure logging level
+logging.basicConfig(filename='logfile.log', level=logging.INFO)
 
 # Function : For each client
 def threaded_client(connection):
@@ -46,9 +49,11 @@ def threaded_client(connection):
             count = count.decode()
             if count == "I":
                 HashTable_count[name] = HashTable_count[name] + 1
+                logging.info("User {} - current counter value {}.".format(name, HashTable_count[name]))
                 connection.send(str.encode('Increase'))
             if count == "D":
                 HashTable_count[name] = HashTable_count[name] - 1
+                logging.info("User {} - current counter value {}.".format(name, HashTable_count[name]))
                 connection.send(str.encode('Decrease'))
             if count == "E":
                 connection.send(str.encode('Log Out'))
@@ -67,9 +72,11 @@ def threaded_client(connection):
                 count = count.decode()
                 if count == "I":
                     HashTable_count[name] = HashTable_count[name] + 1
+                    logging.info("User {} - current counter value {}.".format(name, HashTable_count[name]))
                     connection.send(str.encode('Increase'))
                 if count == "D":
                     HashTable_count[name] = HashTable_count[name] - 1
+                    logging.info("User {} - current counter value {}".format(name, HashTable_count[name]))
                     connection.send(str.encode('Decrease'))
                 if count == "E":
                     connection.send(str.encode('Log Out'))
