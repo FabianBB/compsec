@@ -60,5 +60,5 @@ while True:
     )
     client_handler.start()
     ThreadCount += 1
-    print('Conđnection Request: ' + str(ThreadCount))
+    print('Connection Request: ' + str(ThreadCount))
 ServerSocket.close()
