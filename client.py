@@ -1,46 +1,28 @@
 import socket
+import json
+import sys
 
+#Load the JSON file
+user_data = open("config.JSON")
+user_data = json.load(user_data)
+user_data = json.dumps(user_data)
 
-
-# create an ipv4 (AF_INET) socket object using the tcp protocol (SOCK_STREAM)
+# create a socket object
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # connect the client
 # client.connect((target, port))
-client.connect(('127.0.0.1', 1233))
-response = client.recv(2048)
-
-# Input UserName
-name = input(response.decode())
-client.send(str.encode(name))
-response = client.recv(2048)
-
-# Input Password
-password = input(response.decode())
-client.send(str.encode(password))
-''' Response : Status of Connection :
-	1 : Registeration successful 
-	2 : Connection Successful
-	3 : Login Failed
-'''
-# Receive response
-response = client.recv(2048)
-response = response.decode()
-
-print(response)
-
-
-
-responseC = ""
-while True:
-    # Counter
+try:
+    client.connect(('127.0.0.1', 1233))
+    # Send json
+    client.send(user_data.encode())
+    # Receive response
     response = client.recv(2048)
-    count = input(response.decode())
-    client.send(str.encode(count))
-    #Response of counter
-    responseC = client.recv(2048)
-    responseC = responseC.decode()
-    if responseC == "Log Out":
-        break
+    response = response.decode()
+    print(response)
+
+except socket.gaierror:
+    print('There was an error resolving the host')
+    sys.exit()
 
 client.close()
