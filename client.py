@@ -3,7 +3,10 @@ import json
 import sys
 
 #Load the JSON file
-user_data = open("config.JSON")
+file = sys.argv[1]
+print(file)
+
+user_data = open("file")
 user_data = json.load(user_data)
 user_data = json.dumps(user_data)
 
