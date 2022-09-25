@@ -1,10 +1,8 @@
 import json
 import socket
-import os
 import threading
 import hashlib
 import time
-
 
 # Create Socket (TCP) Connection
 ServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
@@ -20,9 +18,6 @@ print('Waiting...')
 ServerSocket.listen(5)
 HashTable = {}
 HashTable_count = {}
-
-# Configure logging level
-logging.basicConfig(filename='logfile.log', level=logging.INFO)
 
 def threaded_client(connection):
     #Receive json
@@ -55,6 +50,15 @@ def threaded_client(connection):
     else:
         # If already existing user, check if the entered password is correct
         if (HashTable[name] == password):
+            # read from log file
+            with open("log.txt", 'r') as log:
+                loglines = log.read().split("\n")
+            log.close()
+            # find line with last transaction of a given user and extract the counter
+            s = name + ","
+            indices = [s in line for line in loglines]
+            idx = max([i for i, x in enumerate(indices) if x])
+            HashTable_count[name] = int(loglines[idx].split(",")[1])
             connection.send(str.encode('Connection Successful'))  # Response Code for Connected Client
             print('Connected : ', name)
             print("-------------------------------------------")
@@ -71,7 +75,10 @@ def counter_phase(name, steps, delay):
             HashTable_count[name] = HashTable_count[name] + int(string[1])
         if string[0] == "DECREASE":
             HashTable_count[name] = HashTable_count[name] - int(string[1])
-        print("Counter of user ",name, " is ",HashTable_count[name])
+        log = open("log.txt", "a+")
+        log.write(name + "," + str(HashTable_count[name]) + "\n")
+        log.close()
+        print("Counter: ", name, HashTable_count[name])
         time.sleep(delay)
     HashTable_count[name] = 0 #Reset counter
 
