@@ -1,8 +1,10 @@
+import json
 import socket
 import os
 import threading
 import hashlib
-import logging
+import time
+
 
 # Create Socket (TCP) Connection
 ServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
@@ -14,7 +16,7 @@ try:
 except socket.error as e:
     print(str(e))
 
-print('Waiting for a Connection..')
+print('Waiting...')
 ServerSocket.listen(5)
 HashTable = {}
 HashTable_count = {}
@@ -22,72 +24,56 @@ HashTable_count = {}
 # Configure logging level
 logging.basicConfig(filename='logfile.log', level=logging.INFO)
 
-# Function : For each client
 def threaded_client(connection):
-    connection.send(str.encode('ENTER USERNAME : '))  # Request Username
-    name = connection.recv(2048)
-    connection.send(str.encode('ENTER PASSWORD : '))  # Request Password
-    password = connection.recv(2048)
-    password = password.decode()
-    name = name.decode()
+    #Receive json
+    jsonReceived = connection.recv(1024)
+    data = jsonReceived.decode('utf-8')
+    data = json.loads(data)
+    print("Json received -->", data)
+
+    #Save elements of json
+    name = data["id"]
+    password = data["password"]
+    steps = data["actions"]["steps"]
+    delay = data["actions"]["delay"]
+    password = password
+    name = name
     password = hashlib.sha256(str.encode(password)).hexdigest()  # Password hash using SHA256
-    # REGISTERATION PHASE
-    # If new user,  regiter in Hashtable Dictionary
+
+    #Registration phase
     if name not in HashTable:
         HashTable[name] = password
         HashTable_count[name] = 0
-        connection.send(str.encode('Registeration Successful'))
+        connection.send(str.encode('Registration Successful'))
         print('Registered : ', name)
         print("{:<8} {:<20}".format('USER', 'PASSWORD'))
         for k, v in HashTable.items():
             label, num = k, v
             print("{:<8} {:<20}".format(label, num))
         print("-------------------------------------------")
-        while True:
-            connection.send(str.encode('INCREASE / DECREASE (I/D) : '))
-            count = connection.recv(2048)
-            count = count.decode()
-            if count == "I":
-                HashTable_count[name] = HashTable_count[name] + 1
-                logging.info("User {} - current counter value {}.".format(name, HashTable_count[name]))
-                connection.send(str.encode('Increase'))
-            if count == "D":
-                HashTable_count[name] = HashTable_count[name] - 1
-                logging.info("User {} - current counter value {}.".format(name, HashTable_count[name]))
-                connection.send(str.encode('Decrease'))
-            if count == "E":
-                connection.send(str.encode('Log Out'))
-                break
-            print(HashTable_count[name])
-
+        counter_phase(name, steps, delay)
     else:
         # If already existing user, check if the entered password is correct
         if (HashTable[name] == password):
             connection.send(str.encode('Connection Successful'))  # Response Code for Connected Client
             print('Connected : ', name)
             print("-------------------------------------------")
-            while True:
-                connection.send(str.encode('INCREASE / DECREASE (I/D) : '))
-                count = connection.recv(2048)
-                count = count.decode()
-                if count == "I":
-                    HashTable_count[name] = HashTable_count[name] + 1
-                    logging.info("User {} - current counter value {}.".format(name, HashTable_count[name]))
-                    connection.send(str.encode('Increase'))
-                if count == "D":
-                    HashTable_count[name] = HashTable_count[name] - 1
-                    logging.info("User {} - current counter value {}".format(name, HashTable_count[name]))
-                    connection.send(str.encode('Decrease'))
-                if count == "E":
-                    connection.send(str.encode('Log Out'))
-                    break
-                print(HashTable_count[name])
-
+            counter_phase(name, steps, delay)
         else:
             connection.send(str.encode('Login Failed'))  # Response code for login failed
             print('Connection denied : ', name)
     connection.close()
-
+# Handles the counter
+def counter_phase(name, steps, delay):
+    for step in steps:
+        string = step.split()
+        if string[0] == "INCREASE":
+            HashTable_count[name] = HashTable_count[name] + int(string[1])
+        if string[0] == "DECREASE":
+            HashTable_count[name] = HashTable_count[name] - int(string[1])
+        print("Counter of user ",name, " is ",HashTable_count[name])
+        time.sleep(delay)
+    HashTable_count[name] = 0 #Reset counter
 
 while True:
     Client, address = ServerSocket.accept()
@@ -97,5 +83,4 @@ while True:
     )
     client_handler.start()
     ThreadCount += 1
-    print('Connection Request: ' + str(ThreadCount))
 ServerSocket.close()
