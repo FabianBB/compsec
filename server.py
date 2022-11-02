@@ -19,23 +19,31 @@ ServerSocket.listen(5)
 HashTable = {}
 HashTable_count = {}
 
+
 def threaded_client(connection):
-    #Receive json
+    # Receive json
     jsonReceived = connection.recv(1024)
     data = jsonReceived.decode('utf-8')
     data = json.loads(data)
     print("Json received -->", data)
 
-    #Save elements of json
+    # Save elements of json
+
     name = data["id"]
+
     password = data["password"]
+
     steps = data["actions"]["steps"]
+
     delay = data["actions"]["delay"]
+
     password = password
+
     name = name
+
     password = hashlib.sha256(str.encode(password)).hexdigest()  # Password hash using SHA256
 
-    #Registration phase
+    # Registration phase
     if name not in HashTable:
         HashTable[name] = password
         HashTable_count[name] = 0
@@ -67,20 +75,23 @@ def threaded_client(connection):
             connection.send(str.encode('Login Failed'))  # Response code for login failed
             print('Connection denied : ', name)
     connection.close()
+
+
 # Handles the counter
 def counter_phase(name, steps, delay):
     for step in steps:
         string = step.split()
         if string[0] == "INCREASE":
-            HashTable_count[name] = HashTable_count[name] + int(string[1])
+            HashTable_count[name] = HashTable_count[name] + float(string[1])
         if string[0] == "DECREASE":
-            HashTable_count[name] = HashTable_count[name] - int(string[1])
+            HashTable_count[name] = HashTable_count[name] - float(string[1])
         log = open("log.txt", "a+")
         log.write(name + "," + str(HashTable_count[name]) + "\n")
         log.close()
         print("Counter: ", name, HashTable_count[name])
         time.sleep(delay)
-    HashTable_count[name] = 0 #Reset counter
+    HashTable_count[name] = 0  # Reset counter
+
 
 while True:
     Client, address = ServerSocket.accept()
