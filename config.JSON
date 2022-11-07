@@ -1,18 +1,17 @@
 {
-  "id": "user",
-  "password": "12",
+  "id": "use!rina",
+  "password": "12345",
   "server":
   {
       "ip": "127.0.0.1",
       "port": 1233
   },
   "actions": {
-          "delay": 10,
-          "steps": [
-            "INCREASE 20",
-            "DECREASE 30",
-            "DECREASE 10",
-            "INCREASE 80"
-          ]
+          "delay": 3,
+          "steps": ["INCREASE 20",
+                    "DECREASE 30",
+                    "DECREASE 10",
+                    "INCREASE 80"
+                   ]
   }
 }
