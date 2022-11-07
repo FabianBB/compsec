@@ -8,7 +8,7 @@ print(file)
 
 user_data = open(file)
 user_data = json.load(user_data)
-#user_data = json.dumps(user_data)
+
 
 
 name = user_data["id"]
@@ -56,7 +56,7 @@ if delay >= 32767:
 
 # create a socket object
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+user_data = json.dumps(user_data)
 # connect the client
 # client.connect((target, port))
 try:
