@@ -124,3 +124,7 @@ userina,0.0
 userina,80.0
 userina,160.0
 userina,240.0
+userina,20.0
+userina,-10.0
+userina,-20.0
+userina,60.0
