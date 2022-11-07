@@ -7,6 +7,8 @@ import time
 
 # Create Socket (TCP) Connection
 ServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+ServerSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 host = '127.0.0.1'
 port = 1233
 ThreadCount = 0
@@ -99,6 +101,7 @@ while True:
     )
     client_handler.start()
     ThreadCount += 1
+
 
 ServerSocket.shutdown(2)
 ServerSocket.shutdown(socket.SHUT_RDWR)
