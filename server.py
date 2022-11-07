@@ -39,13 +39,6 @@ def threaded_client(connection):
         name = name
         password = hashlib.sha256(str.encode(password)).hexdigest()  # Password hash using SHA256
 
-        # id and password should only use characters from an allow list
-        allow_list = set(string.ascii_letters + string.digits + ".-_")
-        if not all(letter in allow_list for letter in name):
-            raise Exception("Only letters A-Z, digits 0-9 and _,.,- allowed for username!")
-        if not all(letter in allow_list for letter in password):
-            raise Exception("Only letters A-Z, digits 0-9 and _,.,- allowed for password!")
-
     except KeyError:
         print("JSON file has wrong structure!")
     except ValueError:
@@ -106,4 +99,7 @@ while True:
     )
     client_handler.start()
     ThreadCount += 1
+
+ServerSocket.shutdown(2)
+ServerSocket.shutdown(socket.SHUT_RDWR)
 ServerSocket.close()
