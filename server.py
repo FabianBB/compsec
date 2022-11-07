@@ -2,6 +2,7 @@ import json
 import socket
 import threading
 import hashlib
+import string
 import time
 
 # Create Socket (TCP) Connection
@@ -23,17 +24,30 @@ def threaded_client(connection):
     #Receive json
     jsonReceived = connection.recv(1024)
     data = jsonReceived.decode('utf-8')
-    data = json.loads(data)
-    print("Json received -->", data)
+    try:
+        data = json.loads(data)
+        print("Json received -->", data)
 
-    #Save elements of json
-    name = data["id"]
-    password = data["password"]
-    steps = data["actions"]["steps"]
-    delay = data["actions"]["delay"]
-    password = password
-    name = name
-    password = hashlib.sha256(str.encode(password)).hexdigest()  # Password hash using SHA256
+        #Try to save elements of json
+        name = data["id"]
+        password = data["password"]
+        steps = data["actions"]["steps"]
+        delay = data["actions"]["delay"]
+        password = password
+        name = name
+        password = hashlib.sha256(str.encode(password)).hexdigest()  # Password hash using SHA256
+
+        # id and password should only use characters from an allow list
+        allow_list = set(string.ascii_letters + string.digits + ".-_")
+        if not all(letter in allow_list for letter in name):
+            raise Exception("Only letters A-Z, digits 0-9 and _,.,- allowed for username!")
+        if not all(letter in allow_list for letter in password):
+            raise Exception("Only letters A-Z, digits 0-9 and _,.,- allowed for password!")
+
+    except KeyError:
+        print("JSON file has wrong structure!")
+    except ValueError:
+        print("JSON file contains missing values!")
 
     #Registration phase
     if name not in HashTable:

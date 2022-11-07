@@ -1,0 +1,17 @@
+INFO:root:User user counter increased by 1.
+INFO:root:User user counter decreased by 1.
+INFO:root:User user counter decreased by 1.
+INFO:root:User USER counter increased by 1.
+INFO:root:User USER counter decreased by 1.
+INFO:root:User USER counter decreased by 1.
+INFO:root:User USER counter decreased by 1.
+INFO:root:User 1234 counter increased by 1.
+INFO:root:User 1234 counter decreased by 1.
+INFO:root:User 1234 counter decreased by 1.
+INFO:root:User potato - current counter value 1.
+INFO:root:User potato - current counter value 2.
+INFO:root:User potato - current counter value 3.
+INFO:root:User potato - current counter value 4.
+INFO:root:User potato - current counter value 5.
+INFO:root:User zoo - current counter value -1.
+INFO:root:User zoo - current counter value 0.
