@@ -30,10 +30,17 @@ for step in steps:
     if not isinstance(step, str) or len(step) == 0:
         print("Step must be a string")
         sys.exit(1)
-    elif len(step) >= 64:
+    if len(step) >= 64:
         print("Step string too big")
         sys.exit(1)
-    if step.split()[1] >= sys.maxsize:
+    if step.split()[0] not in ["INCREASE", "DECREASE"]:
+        print("Step must start with INCREASE or DECREASE")
+        sys.exit(1)
+    if not step.split()[1].isdigit():
+        print("Step value must be a number")
+        sys.exit(1)
+
+    if float(step.split()[1]) >= sys.maxsize:
         print("Number too big")
         sys.exit(1)
 
