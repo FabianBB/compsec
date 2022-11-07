@@ -1,6 +1,7 @@
 import socket
 import json
 import sys
+import string
 
 #Load the JSON file
 file = sys.argv[1]
@@ -51,6 +52,14 @@ if not isinstance(delay, int) or delay < 0:
 
 if delay >= 32767:
     print("Delay too big")
+    sys.exit(1)
+
+allow_list = set(string.ascii_letters + string.digits + ".-_")
+if not all(letter in allow_list for letter in name):
+    print("Only letters A-Z, digits 0-9 and _,.,- allowed for username!")
+    sys.exit(1)
+if not all(letter in allow_list for letter in password):
+    print("Only letters A-Z, digits 0-9 and _,.,- allowed for password!")
     sys.exit(1)
 
 
