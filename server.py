@@ -30,7 +30,7 @@ def threaded_client(connection):
     data = jsonReceived.decode('utf-8')
     try:
         data = json.loads(data)
-        print("Json received -->", data)
+        print("JSON received -->", data)
 
         # Save elements of json
         name = data["id"]
